@@ -24,11 +24,8 @@ jobs:
   approve-workflow-run:
     name: Approve CI
     # Even though job conditionals are difficult to debug, this will reduce the number of unnecessary runs
-    if:
-      github.event_name == 'pull_request_target' &&
-      github.event.action == 'labeled' &&
-      github.event.label.name == 'ci-approved'
-    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request_target' && github.event.action == 'labeled' && github.event.label.name == 'ci-approved'
+    runs-on: ubuntu-24.04
     steps:
       - name: Env
         run: printenv
@@ -37,8 +34,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          persist-credentials:
-            false
+          persist-credentials: false
       - name: Find Workflow Run ID
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

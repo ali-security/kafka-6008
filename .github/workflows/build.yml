@@ -22,17 +22,17 @@ on:
   workflow_call:
     inputs:
       is-trunk:
-        description: "Is this a trunk build?"
+        description: Is this a trunk build?
         default: true
         type: boolean
       is-public-fork:
-        description: "Is this CI run from a public fork?"
+        description: Is this CI run from a public fork?
         default: true
         type: boolean
 
 jobs:
   load-catalog:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     name: Load Test Catalog
     steps:
       - name: Checkout main
@@ -43,7 +43,7 @@ jobs:
       - name: Checkout test-catalog
         uses: actions/checkout@v4
         with:
-          ref: 'test-catalog'
+          ref: test-catalog
           persist-credentials: false
           fetch-depth: 100  # Needs to be large enough to ensure we can fetch N days ago
           path: test-catalog
@@ -76,7 +76,7 @@ jobs:
           compression-level: 9
 
   validate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     name: Compile and Check Java
     outputs:
       is-draft: ${{ steps.check-draft-pr.outputs.is-draft }}
@@ -147,11 +147,11 @@ jobs:
   test:
     needs: [validate, load-catalog]
     if: ${{ ! needs.validate.outputs.is-draft }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        java: [ 23, 17 ]  # If we change these, make sure to adjust ci-complete.yml
+        java: [23, 17]    # If we change these, make sure to adjust ci-complete.yml
     outputs:
       timed-out: ${{ (steps.junit-test.outputs.gradle-exitcode == '124' || steps.junit-quarantined-test.outputs.gradle-exitcode == '124') }}
     name: JUnit tests Java ${{ matrix.java }}
@@ -249,7 +249,7 @@ jobs:
     name: Update Test Catalog
     needs: test
     if: ${{ always() && inputs.is-trunk && needs.test.outputs.timed-out == 'false' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
     steps:
@@ -271,7 +271,7 @@ jobs:
         env:
           COMMIT_MSG: |
             Update test catalog data for GHA workflow run ${{ github.run_id }}
-            
+
             Commit: https://github.com/apache/kafka/commit/${{ github.sha }}
             GitHub Run: https://github.com/apache/kafka/actions/runs/${{ github.run_id }}
         run: |

@@ -13,32 +13,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: 'Deflake a test'
+name: Deflake a test
 on:
   workflow_dispatch:
     inputs:
       test-module:
-        description: 'Gradle sub-module which contains the test being de-flaked. Should be like :core'
+        description: Gradle sub-module which contains the test being de-flaked. Should be like :core
         required: true
         type: string
       test-pattern:
-        description: 'Test class to de-flake (must be a ClusterTest). Should be like *SomeTest*'
+        description: Test class to de-flake (must be a ClusterTest). Should be like *SomeTest*
         required: true
         type: string
       test-repeat:
-        description: 'Number of times to invoke the test'
+        description: Number of times to invoke the test
         required: true
         type: number
         default: 1
       java-version:
-        description: 'Java version to use.'
+        description: Java version to use.
         required: true
         type: string
         default: '17'
 
 jobs:
   deflake:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     name: Deflake JUnit tests
     steps:
       - name: Checkout code

@@ -26,15 +26,14 @@ jobs:
   # https://securitylab.github.com/resources/github-actions-preventing-pwn-requests/.
   pr-review-trigger:
     name: Reviewed
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Env
         run: printenv
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
       - name: Capture PR Number
-        run:
-          echo ${{ github.event.pull_request.number }} >> pr-number.txt
+        run: echo ${{ github.event.pull_request.number }} >> pr-number.txt
       - name: Archive Event
         uses: actions/upload-artifact@v4
         with:

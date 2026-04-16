@@ -39,12 +39,12 @@ jobs:
   upload-build-scan:
     # Skip this workflow if the CI run was skipped or cancelled
     if: (github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        java: [ 23, 17 ]
-        artifact-prefix: [ "build-scan-test-", "build-scan-quarantined-test-"]
+        java: [23, 17]
+        artifact-prefix: [build-scan-test-, build-scan-quarantined-test-]
     steps:
       - name: Env
         run: printenv
@@ -53,8 +53,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          persist-credentials:
-            false
+          persist-credentials: false
       - name: Setup Gradle
         uses: ./.github/actions/setup-gradle
         with:
@@ -76,10 +75,10 @@ jobs:
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
           commit_sha: ${{ github.event.workflow_run.head_sha }}
-          url: '${{ github.event.workflow_run.html_url }}'
-          description: 'Could not find build scan'
-          context: 'Gradle Build Scan / Java ${{ matrix.java }}'
-          state: 'error'
+          url: ${{ github.event.workflow_run.html_url }}
+          description: Could not find build scan
+          context: Gradle Build Scan / Java ${{ matrix.java }}
+          state: error
       - name: Publish Scan
         id: publish-build-scan
         if: ${{ steps.download-build-scan.outcome == 'success' }}
@@ -104,10 +103,10 @@ jobs:
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
           commit_sha: ${{ github.event.workflow_run.head_sha }}
-          url: '${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}'
-          description: 'The build scan failed to be published'
-          context: 'Gradle Build Scan / Java ${{ matrix.java }}'
-          state: 'error'
+          url: ${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}
+          description: The build scan failed to be published
+          context: Gradle Build Scan / Java ${{ matrix.java }}
+          state: error
       - name: Update Status Check
         if: ${{ steps.publish-build-scan.outcome == 'success' }}
         uses: ./.github/actions/gh-api-update-status
@@ -116,6 +115,6 @@ jobs:
           repository: ${{ github.repository }}
           commit_sha: ${{ github.event.workflow_run.head_sha }}
           url: ${{ steps.publish-build-scan.outputs.build-scan-url }}
-          description: 'The build scan was successfully published'
-          context: 'Gradle Build Scan / Java ${{ matrix.java }}'
-          state: 'success'
+          description: The build scan was successfully published
+          context: Gradle Build Scan / Java ${{ matrix.java }}
+          state: success

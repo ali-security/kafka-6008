@@ -17,16 +17,12 @@ name: Flaky Test Report
 on:
   workflow_dispatch:      # Let us run manually
 
-  schedule:
-    - cron: '0 6 * * *'   # Run daily at 6am UTC
-
-
 jobs:
   flaky-test-report:
     name: Flaky Test Report
     permissions:
       contents: read
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Env
         run: printenv
@@ -39,5 +35,5 @@ jobs:
       - name: Run Report
         env:
           GE_ACCESS_TOKEN: ${{ secrets.GE_ACCESS_TOKEN }}
-        run: |
+        run: |-
           python ./.github/scripts/develocity_reports.py >> $GITHUB_STEP_SUMMARY

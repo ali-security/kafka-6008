@@ -27,7 +27,7 @@ jobs:
   # https://securitylab.github.com/resources/github-actions-preventing-pwn-requests/.
   remove-triage:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Env
         run: printenv
